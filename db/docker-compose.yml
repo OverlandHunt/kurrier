@@ -13,6 +13,7 @@ services:
         ["CMD","node","-e","fetch('http://web:3000').then((r) => {if (r.status !== 200) throw new Error(r.status)})"]
     profiles: ["app"]
     environment:
+      HOSTNAME: "0.0.0.0"
       WEB_PORT: ${WEB_PORT}
       WEB_URL: ${WEB_URL}
       DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
@@ -372,6 +373,7 @@ services:
       METRICS_JWT_SECRET: ${JWT_SECRET}
       REGION: local
       ERL_AFLAGS: -proto_dist inet_tcp
+      RELEASE_NODE: supavisor@127.0.0.1
       POOLER_TENANT_ID: ${POOLER_TENANT_ID}
       POOLER_DEFAULT_POOL_SIZE: ${POOLER_DEFAULT_POOL_SIZE}
       POOLER_MAX_CLIENT_CONN: ${POOLER_MAX_CLIENT_CONN}
