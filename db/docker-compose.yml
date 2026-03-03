@@ -344,6 +344,9 @@ services:
 
   supavisor:
     container_name: supabase-pooler
+    hostname: supabase-pooler
+    extra_hosts:
+      - "supabase-pooler:127.0.0.1"
     image: supabase/supavisor:2.7.4
     restart: unless-stopped
     ports:
