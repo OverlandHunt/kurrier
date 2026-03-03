@@ -3,8 +3,6 @@ services:
   web:
     image: ghcr.io/kurrier-org/kurrier-web:v1.1.13
     restart: unless-stopped
-    ports:
-      - "${WEB_PORT:-3000}:3000"
     depends_on:
       db:
         condition: service_healthy
@@ -36,8 +34,6 @@ services:
   worker:
     image: ghcr.io/kurrier-org/kurrier-worker:v1.1.13
     restart: unless-stopped
-    ports:
-      - "${NITRO_PORT:-3001}:3001"
     depends_on:
       db:
         condition: service_healthy
