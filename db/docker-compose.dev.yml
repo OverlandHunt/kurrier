@@ -33,6 +33,8 @@ services:
       SEARCH_REBUILD_ON_BOOT: ${SEARCH_REBUILD_ON_BOOT}
       WORKER_URL: ${WORKER_URL}
       DAV_URL: http://dav:5232
+    labels:
+      - "proxy.aliases=Kurrier"
 
   worker:
     image: ghcr.io/kurrier-org/kurrier-worker:v0.0.85
@@ -70,6 +72,8 @@ services:
     volumes:
       - ./dav_config:/dav-config
       - ./dav_data:/dav-data
+    labels:
+      - "proxy.exclude=true"
 
   redis:
     image: redis:8.2.2
@@ -83,6 +87,8 @@ services:
       - ./redis_data:/data
     ports:
       - ${REDIS_PORT}:${REDIS_PORT}
+    labels:
+      - "proxy.exclude=true"
 
   typesense:
     image: typesense/typesense:29.0
@@ -97,6 +103,8 @@ services:
       --enable-cors
     environment:
       - TYPESENSE_API_KEY=${TYPESENSE_API_KEY}
+    labels:
+      - "proxy.exclude=true"
 
   db-bootstrap:
     image: postgres:15
@@ -116,6 +124,8 @@ services:
       - ./init:/scripts
     entrypoint: [ "/bin/bash", "/scripts/db-bootstrap.sh" ]
     restart: "no"
+    labels:
+      - "proxy.exclude=true"
 
 
   dav:
@@ -126,6 +136,8 @@ services:
     volumes:
       - ./dav_config:/var/www/baikal/config
       - ./dav_data:/var/www/baikal/Specific
+    labels:
+      - "proxy.exclude=true"
 
   studio:
     container_name: supabase-studio
@@ -155,6 +167,9 @@ services:
       NEXT_PUBLIC_ENABLE_LOGS: true
       NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
 
+    labels:
+      - "proxy.exclude=true"
+
   kong:
     container_name: supabase-kong
     image: kong:2.8.1
@@ -176,6 +191,8 @@ services:
       DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
       DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
     entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
+    labels:
+      - "proxy.exclude=true"
 
   auth:
     container_name: supabase-auth
@@ -219,6 +236,8 @@ services:
       GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: ${MAILER_URLPATHS_EMAIL_CHANGE}
       GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
+      labels:
+      - "proxy.exclude=true"
 
   rest:
     container_name: supabase-rest
@@ -239,6 +258,8 @@ services:
       [
         "postgrest"
       ]
+    labels:
+      - "proxy.exclude=true"
 
   storage:
     container_name: supabase-storage
@@ -272,6 +293,8 @@ services:
       GLOBAL_S3_BUCKET: stub
       ENABLE_IMAGE_TRANSFORMATION: "true"
       IMGPROXY_URL: http://imgproxy:5001
+    labels:
+      - "proxy.exclude=true"
 
   meta:
     container_name: supabase-meta
@@ -288,6 +311,8 @@ services:
       PG_META_DB_USER: supabase_admin
       PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
       CRYPTO_KEY: ${PG_META_CRYPTO_KEY}
+    labels:
+      - "proxy.exclude=true"
 
   db:
     container_name: supabase-db
@@ -322,6 +347,8 @@ services:
       RLS_CLIENT_PASSWORD: ${RLS_CLIENT_PASSWORD}
     command:
       ["postgres","-c","config_file=/etc/postgresql/postgresql.conf","-c","log_min_messages=fatal"]
+    labels:
+      - "proxy.exclude=true"
 
   supavisor:
     container_name: supabase-pooler
@@ -361,6 +388,8 @@ services:
       DB_POOL_SIZE: ${POOLER_DB_POOL_SIZE}
     command:
       ["/bin/sh","-c","/app/bin/migrate && /app/bin/supavisor eval \"$$(cat /etc/pooler/pooler.exs)\" && /app/bin/server"]
+    labels:
+      - "proxy.exclude=true"
 
 volumes:
   db-config:
